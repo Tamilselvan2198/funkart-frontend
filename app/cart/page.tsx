@@ -104,9 +104,8 @@ export default function CartPage() {
         return;
       }
 
-      const response = await fetch("http://localhost:8080/api/cart", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cart`, {
         method: "GET",
-
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -189,7 +188,7 @@ export default function CartPage() {
       const newQuantity = item.quantity + 1;
 
       const response = await fetch(
-        `http://localhost:8080/api/cart/${item.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/cart/${item.id}`,
         {
           method: "PUT",
 
@@ -245,7 +244,7 @@ export default function CartPage() {
       const newQuantity = item.quantity - 1;
 
       const response = await fetch(
-        `http://localhost:8080/api/cart/${item.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/cart/${item.id}`,
         {
           method: "PUT",
 
@@ -293,7 +292,7 @@ export default function CartPage() {
       }
 
       const response = await fetch(
-        `http://localhost:8080/api/cart/${item.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/cart/${item.id}`,
         {
           method: "DELETE",
 
