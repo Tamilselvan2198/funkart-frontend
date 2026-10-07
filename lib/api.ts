@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 
 export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   if (!API_URL) {

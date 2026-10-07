@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination:
+          "https://spring-50046636716.development.catalystappsail.in/api/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
