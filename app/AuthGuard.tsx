@@ -7,7 +7,12 @@ interface AuthGuardProps {
   children: React.ReactNode;
 }
 
-const publicPages = ["/login", "/register"];
+const publicPages = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+];
 
 export default function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
