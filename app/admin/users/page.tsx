@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
+import { useSnackbar } from "@/app/components/SnackbarProvider";
 import {
   AdminUser,
   CreateUserRequest,
@@ -14,23 +15,18 @@ import {
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const { showMessage } = useSnackbar();
   const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
-
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"ADMIN" | "CUSTOMER">("CUSTOMER");
-
   const [saving, setSaving] = useState(false);
 
-  // =========================
   // LOAD USERS
-  // =========================
 
   const loadUsers = async () => {
     try {
@@ -50,9 +46,7 @@ export default function AdminUsersPage() {
     loadUsers();
   }, []);
 
-  // =========================
   // OPEN ADD MODAL
-  // =========================
 
   const openAddModal = () => {
     setEditingUser(null);
@@ -65,9 +59,7 @@ export default function AdminUsersPage() {
     setShowModal(true);
   };
 
-  // =========================
   // OPEN EDIT MODAL
-  // =========================
 
   const openEditModal = (user: AdminUser) => {
     setEditingUser(user);
@@ -80,23 +72,21 @@ export default function AdminUsersPage() {
     setShowModal(true);
   };
 
-  // =========================
   // SAVE USER
-  // =========================
 
   const handleSave = async () => {
     if (!name.trim()) {
-      alert("Name is required");
+      showMessage("Name is required", "warning");
       return;
     }
 
     if (!email.trim()) {
-      alert("Email is required");
+      showMessage("Email is required", "warning");
       return;
     }
 
     if (!editingUser && !password.trim()) {
-      alert("Password is required");
+      showMessage("Password is required", "warning");
       return;
     }
 
@@ -125,17 +115,20 @@ export default function AdminUsersPage() {
       setShowModal(false);
 
       await loadUsers();
+
+      showMessage(
+        editingUser ? "User updated successfully" : "User created successfully",
+        "success",
+      );
     } catch (error) {
       console.error("Failed to save user:", error);
-      alert("Failed to save user");
+      showMessage("Failed to save user", "error");
     } finally {
       setSaving(false);
     }
   };
 
-  // =========================
   // DELETE USER
-  // =========================
 
   const handleDelete = async (id: number) => {
     const confirmed = window.confirm(
@@ -148,18 +141,14 @@ export default function AdminUsersPage() {
 
     try {
       await deleteAdminUser(id);
-
       await loadUsers();
+      showMessage("User deleted successfully", "success");
     } catch (error) {
-      console.error("Failed to delete user:", error);
-
-      alert("Failed to delete user");
+      showMessage("Failed to delete user", "error");
     }
   };
 
-  // =========================
   // SEARCH
-  // =========================
 
   const filteredUsers = users.filter((user) => {
     const value = search.toLowerCase();
