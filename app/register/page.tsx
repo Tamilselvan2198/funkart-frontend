@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSnackbar } from "@/app/components/SnackbarProvider";
 
 export default function RegisterPage() {
   const router = useRouter();
-
+  const { showMessage } = useSnackbar();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,14 +37,14 @@ export default function RegisterPage() {
 
       if (!response.ok) {
         const message = await response.text();
-        throw new Error(message || "Registration failed");
+        showMessage("Registration failed", "error");
       }
 
-      alert("Registration successful 🎉");
+      showMessage("Registration successful", "success");
 
       router.push("/login");
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Registration failed");
+      showMessage("Registration failed", "error");
     } finally {
       setLoading(false);
     }

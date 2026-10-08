@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
+import { useSnackbar } from "@/app/components/SnackbarProvider";
 
 import {
   Product,
@@ -13,16 +14,14 @@ import {
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
-
   const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
-
   const [showModal, setShowModal] = useState(false);
-
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const { showMessage } = useSnackbar();
 
   // FORM
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -30,15 +29,11 @@ export default function AdminProductsPage() {
   const [category, setCategory] = useState("");
   const [brand, setBrand] = useState("");
   const [rating, setRating] = useState("");
-
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState("");
-
   const [saving, setSaving] = useState(false);
 
-  // =====================================
   // LOAD PRODUCTS
-  // =====================================
 
   const loadProducts = async () => {
     try {
@@ -48,7 +43,7 @@ export default function AdminProductsPage() {
 
       setProducts(data);
     } catch (error) {
-      console.error("Failed to load products:", error);
+      showMessage("Failed to load products:", "error");
     } finally {
       setLoading(false);
     }
@@ -58,9 +53,7 @@ export default function AdminProductsPage() {
     loadProducts();
   }, []);
 
-  // =====================================
   // OPEN ADD
-  // =====================================
 
   const openAddModal = () => {
     setEditingProduct(null);
@@ -79,9 +72,7 @@ export default function AdminProductsPage() {
     setShowModal(true);
   };
 
-  // =====================================
   // OPEN EDIT
-  // =====================================
 
   const openEditModal = (product: Product) => {
     setEditingProduct(product);
@@ -100,9 +91,7 @@ export default function AdminProductsPage() {
     setShowModal(true);
   };
 
-  // =====================================
   // IMAGE CHANGE
-  // =====================================
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -118,58 +107,56 @@ export default function AdminProductsPage() {
     setImagePreview(preview);
   };
 
-  // =====================================
   // SAVE PRODUCT
-  // =====================================
 
   const handleSave = async () => {
     if (!name.trim()) {
-      alert("Product name is required");
+      showMessage("Product name is required", "warning");
       return;
     }
 
     if (!description.trim()) {
-      alert("Description is required");
+      showMessage("Description is required", "warning");
       return;
     }
 
     if (!price || Number(price) < 0) {
-      alert("Enter a valid price");
+      showMessage("Enter a valid price", "warning");
       return;
     }
 
     if (!quantity || Number(quantity) < 0) {
-      alert("Enter a valid quantity");
+      showMessage("Enter a valid quantity", "warning");
       return;
     }
 
     if (!category.trim()) {
-      alert("Category is required");
+      showMessage("Category is required", "warning");
       return;
     }
 
     if (!brand.trim()) {
-      alert("Brand is required");
+      showMessage("Brand is required", "warning");
       return;
     }
 
     if (!rating || Number(rating) < 0 || Number(rating) > 5) {
-      alert("Rating must be between 0 and 5");
+      showMessage("Rating must be between 0 and 5", "warning");
       return;
     }
 
-    // Image required only for CREATE
+    // Image required only when creating
     if (!editingProduct && !image) {
-      alert("Product image is required");
+      showMessage("Product image is required", "warning");
       return;
     }
 
     try {
       setSaving(true);
 
-      // =================================
+      // ==============================
       // CREATE
-      // =================================
+      // ==============================
 
       if (!editingProduct) {
         const formData = new FormData();
@@ -187,11 +174,13 @@ export default function AdminProductsPage() {
         }
 
         await createAdminProduct(formData);
+
+        showMessage("Product added successfully", "success");
       }
 
-      // =================================
+      // ==============================
       // UPDATE
-      // =================================
+      // ==============================
       else {
         await updateAdminProduct(editingProduct.id, {
           name,
@@ -203,6 +192,8 @@ export default function AdminProductsPage() {
           rating: Number(rating),
           imageUrl: editingProduct.imageUrl,
         });
+
+        showMessage("Product updated successfully", "success");
       }
 
       setShowModal(false);
@@ -211,15 +202,13 @@ export default function AdminProductsPage() {
     } catch (error) {
       console.error("Failed to save product:", error);
 
-      alert("Failed to save product");
+      showMessage("Failed to save product", "error");
     } finally {
       setSaving(false);
     }
   };
 
-  // =====================================
   // DELETE
-  // =====================================
 
   const handleDelete = async (id: number) => {
     const confirmed = window.confirm(
@@ -234,16 +223,16 @@ export default function AdminProductsPage() {
       await deleteAdminProduct(id);
 
       await loadProducts();
+
+      showMessage("Product deleted successfully", "success");
     } catch (error) {
       console.error("Failed to delete product:", error);
 
-      alert("Failed to delete product");
+      showMessage("Failed to delete product", "error");
     }
   };
 
-  // =====================================
   // SEARCH
-  // =====================================
 
   const filteredProducts = products.filter((product) => {
     const value = search.toLowerCase();
@@ -255,9 +244,7 @@ export default function AdminProductsPage() {
     );
   });
 
-  // =====================================
   // UI
-  // =====================================
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -437,9 +424,9 @@ export default function AdminProductsPage() {
         </main>
       </div>
 
-      {/* =====================================
+      {/* =
           ADD / EDIT MODAL
-      ===================================== */}
+      = */}
 
       {showModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4">

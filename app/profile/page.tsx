@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import { getUserProfile } from "@/lib/profile";
 import Sidebar from "../components/Sidebar";
+import { useSnackbar } from "../components/SnackbarProvider";
 
 interface UserProfile {
   id: number;
@@ -16,6 +17,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { showMessage } = useSnackbar();
 
   useEffect(() => {
     fetchUserProfile();
@@ -42,7 +44,11 @@ export default function ProfilePage() {
     localStorage.removeItem("jwt");
     localStorage.removeItem("accessToken");
 
-    window.location.href = "/login";
+    showMessage("Logout Successful.", "success");
+
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 1000);
   };
 
   if (loading) {

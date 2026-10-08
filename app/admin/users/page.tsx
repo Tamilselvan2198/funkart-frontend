@@ -121,7 +121,6 @@ export default function AdminUsersPage() {
         "success",
       );
     } catch (error) {
-      console.error("Failed to save user:", error);
       showMessage("Failed to save user", "error");
     } finally {
       setSaving(false);

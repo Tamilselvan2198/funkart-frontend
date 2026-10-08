@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSnackbar } from "@/app/components/SnackbarProvider";
 
 function getRoleFromToken(token: string): string | null {
   try {
@@ -20,7 +21,7 @@ function getRoleFromToken(token: string): string | null {
 
 export default function LoginPage() {
   const router = useRouter();
-
+  const { showMessage } = useSnackbar();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -64,11 +65,13 @@ export default function LoginPage() {
 
       if (role === "ADMIN" || role === "ROLE_ADMIN") {
         router.push("/admin");
+        showMessage("Admin login successfully", "success");
       } else {
         router.push("/products");
+        showMessage("login successfully", "success");
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Login failed");
+      showMessage("Login failed", "error");
     } finally {
       setLoading(false);
     }

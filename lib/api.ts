@@ -11,8 +11,12 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
 
   const headers = new Headers(options.headers);
 
-  // Add JSON content type only when body exists
-  if (options.body && !headers.has("Content-Type")) {
+  // Add JSON Content-Type only for non-FormData requests
+  if (
+    options.body &&
+    !(options.body instanceof FormData) &&
+    !headers.has("Content-Type")
+  ) {
     headers.set("Content-Type", "application/json");
   }
 

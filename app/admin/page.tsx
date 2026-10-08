@@ -1,9 +1,40 @@
 "use client";
 
-import Sidebar from "@/app/components/Sidebar";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
+import Sidebar from "@/app/components/Sidebar";
+import { getDashboardStats } from "@/lib/adminDashboardApi";
+
 export default function AdminPage() {
+  const [users, setUsers] = useState(0);
+  const [products, setProducts] = useState(0);
+  const [orders, setOrders] = useState(0);
+  const [revenue, setRevenue] = useState(0);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadDashboardStats();
+  }, []);
+
+  const loadDashboardStats = async () => {
+    try {
+      setLoading(true);
+
+      const stats = await getDashboardStats();
+
+      setUsers(stats.users);
+      setProducts(stats.products);
+      setOrders(stats.orders);
+      setRevenue(stats.revenue);
+    } catch (error) {
+      console.error("Failed to load dashboard stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex">
@@ -16,24 +47,40 @@ export default function AdminPage() {
 
           {/* STATS */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-7">
+            {/* USERS */}
             <div className="bg-white rounded-xl shadow-sm p-6">
               <p className="text-gray-500">Users</p>
-              <h2 className="text-3xl font-bold mt-2">0</h2>
+
+              <h2 className="text-3xl font-bold mt-2">
+                {loading ? "..." : users}
+              </h2>
             </div>
 
+            {/* PRODUCTS */}
             <div className="bg-white rounded-xl shadow-sm p-6">
               <p className="text-gray-500">Products</p>
-              <h2 className="text-3xl font-bold mt-2">0</h2>
+
+              <h2 className="text-3xl font-bold mt-2">
+                {loading ? "..." : products}
+              </h2>
             </div>
 
+            {/* ORDERS */}
             <div className="bg-white rounded-xl shadow-sm p-6">
               <p className="text-gray-500">Orders</p>
-              <h2 className="text-3xl font-bold mt-2">0</h2>
+
+              <h2 className="text-3xl font-bold mt-2">
+                {loading ? "..." : orders}
+              </h2>
             </div>
 
+            {/* REVENUE */}
             <div className="bg-white rounded-xl shadow-sm p-6">
               <p className="text-gray-500">Revenue</p>
-              <h2 className="text-3xl font-bold mt-2">₹0</h2>
+
+              <h2 className="text-3xl font-bold mt-2">
+                {loading ? "..." : `₹${revenue.toLocaleString("en-IN")}`}
+              </h2>
             </div>
           </div>
 
