@@ -47,8 +47,6 @@ export default function Sidebar({
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
 
-      console.log("Sidebar role:", payload.role);
-
       setRole(payload.role);
     } catch (error) {
       console.error("Failed to decode token:", error);

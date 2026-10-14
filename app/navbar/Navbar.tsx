@@ -25,8 +25,6 @@ export default function Navbar() {
       // JWT = header.payload.signature
       const payload = JSON.parse(atob(token.split(".")[1]));
 
-      console.log("JWT Payload:", payload);
-
       const role = payload.role;
 
       setIsAdmin(role === "ADMIN");

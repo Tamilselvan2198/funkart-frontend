@@ -5,12 +5,13 @@ export interface UserProfile {
   name: string;
   email: string;
   role: string;
+  profileUrl: string;
 }
 
 export async function getUserProfile(): Promise<UserProfile> {
   const response = await apiFetch("/profile", {
     method: "GET",
   });
-
+  
   return response as UserProfile;
 }

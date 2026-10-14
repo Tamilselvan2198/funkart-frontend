@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiFetch } from "@/lib/api";
 import { getUserProfile } from "@/lib/profile";
 import Sidebar from "../components/Sidebar";
 import { useSnackbar } from "../components/SnackbarProvider";
@@ -11,6 +10,7 @@ interface UserProfile {
   name: string;
   email: string;
   role: string;
+  profileUrl: string;
 }
 
 export default function ProfilePage() {
@@ -152,8 +152,17 @@ export default function ProfilePage() {
             <div className="border-b px-8 py-8">
               <div className="flex items-center gap-5">
                 {/* Avatar */}
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-black text-3xl font-bold text-white">
-                  {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+
+                <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-black text-3xl font-bold text-white">
+                  {user.profileUrl ? (
+                    <img
+                      src={user.profileUrl}
+                      alt={`${user.name}'s profile`}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    user.name?.charAt(0).toUpperCase() || "U"
+                  )}
                 </div>
 
                 {/* User name */}
